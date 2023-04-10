@@ -1,0 +1,11 @@
+# Builds
+/target
+
+# Environment vars
+.env
+.env.*
+
+# While developing you most likely want to output the generated
+# resources file into the root. While targeting all TypeScript
+# files this should only that specific file though.
+**.ts

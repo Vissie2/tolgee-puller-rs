@@ -1,0 +1,17 @@
+[package]
+name = "tolgee-puller-rs"
+version = "0.1.0"
+edition = "2021"
+description = "A CLI that pulls your Tolgee resources."
+authors = ["Ilon <lordvissie@gmail.com>"]
+
+[dependencies]
+clap = { version = "4.2.1", features = ["derive", "cargo"] }
+colored = "2.0.0"
+dotenvy = "0.15.7"
+envy = "0.4.2"
+reqwest = { version = "0.11.16" }
+serde = { version = "1.0.159", features = ["derive"] }
+serde_json = "1.0.95"
+tokio = { version = "1.27.0", features = ["full"] }
+zip = "0.6.4"
