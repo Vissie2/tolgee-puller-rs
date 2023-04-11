@@ -2,6 +2,9 @@
 
 A CLI that pulls your Tolgee resources. Basically [tolgee-puller](https://github.com/DutchConcepts/tolgee-puller) but written in Rust.
 
+> <sub>**Warning**
+>  I'm new to Rust. Don't expect this to be of good quality.</sup>
+
 ## Getting started
 
 This crate is not published to any package manager. It can be ran using `cargo run` or by making `tolgee-puller-rs` available by adding the `target/release` directory to your system path environment variable.
