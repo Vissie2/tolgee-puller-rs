@@ -1,5 +1,12 @@
 use crate::cli::Args;
 use serde::Deserialize;
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+pub enum ConfigError {
+    #[error("No API key specified.")]
+    NoApiKey,
+}
 
 #[derive(Deserialize, Debug)]
 struct EnvVars {
@@ -25,7 +32,7 @@ fn get_env() -> EnvVars {
 }
 
 /// Gets the config based on command arguments and env variables.
-pub fn get_config(args: Args) -> Result<Config, String> {
+pub fn get_config(args: Args) -> Result<Config, ConfigError> {
     let env = get_env();
 
     // We prioritize env variables over the command args here.
@@ -34,7 +41,7 @@ pub fn get_config(args: Args) -> Result<Config, String> {
 
     let api_key = match api_key_with_fallback {
         Some(api_key) => api_key,
-        None => return Err("No API key specified.".to_string()),
+        None => return Err(ConfigError::NoApiKey),
     };
 
     let api_url = match api_url_with_fallback {

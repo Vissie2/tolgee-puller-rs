@@ -3,8 +3,22 @@ mod output;
 mod tolgee;
 
 pub mod cli {
-    use crate::{config, output, tolgee};
+    use crate::{
+        config, output,
+        tolgee::{self, Resources},
+    };
     use clap::{Parser, ValueHint};
+    use thiserror::Error;
+
+    #[derive(Debug, Error)]
+    pub enum CliError {
+        #[error("{0}")]
+        Config(#[from] config::ConfigError),
+        #[error("{0}")]
+        Tolgee(#[from] tolgee::TolgeeError),
+        #[error("{0}")]
+        Output(#[from] output::OutputError),
+    }
 
     #[derive(Parser, Debug)]
     #[command(author, version, about, long_about = None)]
@@ -28,13 +42,9 @@ pub mod cli {
         pub split: bool,
     }
 
-    pub async fn initialize() -> Result<(), String> {
+    pub async fn initialize() -> Result<(), CliError> {
         let args = Args::parse();
-
-        let config = match config::get_config(args) {
-            Ok(config) => config,
-            Err(error) => return Err(error),
-        };
+        let config = config::get_config(args)?;
 
         let config::Config {
             api_key,
@@ -46,19 +56,10 @@ pub mod cli {
         } = config;
 
         // Fetches the resources from the Tolgee API. Could panic if something goes wrong.
-        let resources_result = tolgee::fetch_resources(api_url, api_key, lng, ns).await;
-
-        let resources = match resources_result {
-            Ok(resources) => resources,
-            Err(e) => return Err(e),
-        };
+        let resources: Resources = tolgee::fetch_resources(api_url, api_key, lng, ns).await?;
 
         // Converts the resources into TypeScript and writes to the file of the `output_path`.
-        let write_result = output::write_resources_to_file(resources, output_path, split);
-
-        if write_result.is_err() {
-            return Err(write_result.unwrap_err());
-        }
+        output::write_resources_to_file(resources, output_path, split)?;
 
         Ok(())
     }

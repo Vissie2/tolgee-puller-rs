@@ -11,6 +11,6 @@ async fn main() {
 
     match result {
         Ok(_) => logger::success("Succesfully pulled resources!"),
-        Err(e) => logger::error(&e),
+        Err(e) => logger::error(&e.to_string()),
     };
 }
